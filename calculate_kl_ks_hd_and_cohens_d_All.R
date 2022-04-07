@@ -160,7 +160,7 @@ fishdep_regimes <- names(dat_hist)[grepl("sampled", names(dat_hist)) &
                                      #!grepl("random_", names(dat_hist)) &
                                      !grepl("all_", names(dat_hist))]
 
-#Doing historic and future loops separately out of laziness. 
+#Doing historic and future loops separately. 
 
 predictors <- c("temp", "zoo_200", "mld", "chl_surface")
 
@@ -214,48 +214,6 @@ hist_res_df <- bind_rows(hist_df_res) %>%  #not sure why this changes kullback_l
                                 sampling_regime_1 == "random_sampled" ~ "Random",
                                 sampling_regime_1 == "pres" ~ "Presence"))
 
-# #generate colors for different groups
-# pref_pal <- colorRampPalette(brewer.pal(9, "PuBu"))
-# dist_pal <- colorRampPalette(brewer.pal(9, "YlOrRd"))
-# closed_pal <- colorRampPalette(brewer.pal(9, "Greens"))
-# 
-# #Make a darker version
-# pref_pal2 <- colorRampPalette(brewer.pal(9, "PuBu")[4:8])
-# dist_pal2 <- colorRampPalette(brewer.pal(9, "YlOrRd")[4:9])
-# closed_pal2 <- colorRampPalette(brewer.pal(9, "Greens")[4:8])
-# 
-# #do we want the gray  "vs all" in there now? I think so...
-# #Plot all comparisons on same axes -- looks a little too busy
-# ggplot(hist_res_df, 
-#        aes(x = cohens_d, y = hellinger_dist_discr)) +
-#   geom_vline(xintercept = 0, color = "gray70") + #for referenc
-#   geom_point(aes(color = `Sampling regime`, shape = Comparison, size = `Mean RMSE`)) +
-#   scale_color_manual(values = c("black", closed_pal2(3), dist_pal2(8), pref_pal2(5),"gray70"))+
-#   #scale_shape_manual(values = c(18, rep(17, 3), rep(15, 8), rep(19, 5), 4))+
-#   facet_wrap(~ disp_predictor) +
-#   theme_bw()+
-#   xlab("Cohen's D")+
-#   ylab("Hellinger distance")+
-#   ggtitle("Fishery dependent data compared to\nall, randomly-sampled, and species-presence data")+
-#   NULL
-# 
-# #Try facet_grid -- looks better
-# hist_bias_grid_plot <- ggplot(hist_res_df, 
-#                               aes(x = cohens_d, y = hellinger_dist_discr)) +
-#   geom_vline(xintercept = 0, color = "gray70") + #for referenc
-#   geom_point(aes(color = `Sampling regime`, size = `Mean RMSE`)) +
-#   scale_color_manual(values = c("black", closed_pal2(3), dist_pal2(8), pref_pal2(5),"gray70"))+
-#   #scale_shape_manual(values = c(18, rep(17, 3), rep(15, 8), rep(19, 5), 4))+
-#   facet_grid(Comparison ~ disp_predictor) +
-#   theme_bw()+
-#   xlab("Cohen's D")+
-#   ylab("Hellinger distance")+
-#   ggtitle("Fishery dependent data compared to\nall, randomly-sampled, and species-presence data")+
-#   NULL
-# 
-# ggsave(hist_bias_grid_plot, filename = "hist_bias_grid_plot.png")
-
-
 ################Compare fishery dependent sampling to future all conditions
 
 #First, put the data into time bins:
@@ -308,99 +266,6 @@ future_res_df <- bind_rows(future_df_res) %>%  #not sure why this changes kullba
                                 sampling_regime_1 == "per_2040_2069" ~ "2040-2069",
                                 sampling_regime_1 == "per_2070_2100" ~ "2070-2100"))
 
-
-###STOP HERE AND GO TO RMSE_vs_HD_fishdep.R to PLOT FACET GRAPHS!!! ####
-
-#############################
-#Bias and RMSE scatterplots
-#############################
-
-#Plot all on 1 panel
-future_bias_all_plot <- ggplot(future_res_df, 
-                               aes(x = cohens_d, y = hellinger_dist_discr)) +
-  geom_vline(xintercept = 0, color = "gray70") + #for referenc
-  geom_point(aes(color = `Sampling regime`, shape = Comparison)) +
-  scale_color_manual(values = c("black", closed_pal2(3), dist_pal2(8), pref_pal2(5),"gray70"))+
-  #scale_shape_manual(values = c(18, rep(17, 3), rep(15, 8), rep(19, 5), 4))+
-  facet_wrap(~ disp_predictor) +
-  theme_bw()+
-  xlab("Cohen's D")+
-  ylab("Hellinger distance")+
-  ggtitle("Fishery dependent data compared to all future data")+
-  NULL
-
-ggsave(future_bias_all_plot, filename = "future_bias_all_plot.png")
-
-#Plot different time periods separately
-
-#2011-2039
-future_bias_2011_2039_plot <- ggplot(future_res_df %>% filter(Comparison == "2011-2039"), 
-                                     aes(x = cohens_d, y = hellinger_dist_discr)) +
-  geom_vline(xintercept = 0, color = "gray70") + #for referenc
-  geom_point(aes(color = `Sampling regime`, size = `Mean RMSE`)) +
-  scale_size_continuous(limits = c(min(future_res_df$`Mean RMSE`), max(future_res_df$`Mean RMSE`)))+
-  scale_color_manual(values = c("black", closed_pal2(3), dist_pal2(8), pref_pal2(5),"gray70"))+
-  facet_wrap(~ disp_predictor) +
-  theme_bw()+
-  xlab("Cohen's D")+
-  ylab("Hellinger distance")+
-  ggtitle("Fishery dependent data compared to 2011-2039 data")+
-  xlim(min(future_res_df$cohens_d), max(future_res_df$cohens_d))+
-  ylim(min(future_res_df$hellinger_dist_discr), max(future_res_df$hellinger_dist_discr))+
-  NULL
-
-ggsave(future_bias_2011_2039_plot, filename = "future_bias_2011_2039_plot.png")
-
-#2040-2069
-future_bias_2040_2069_plot <- ggplot(future_res_df %>% filter(Comparison == "2040-2069"), 
-                                     aes(x = cohens_d, y = hellinger_dist_discr)) +
-  geom_vline(xintercept = 0, color = "gray70") + #for referenc
-  geom_point(aes(color = `Sampling regime`, size = `Mean RMSE`)) +
-  scale_size_continuous(limits = c(min(future_res_df$`Mean RMSE`), max(future_res_df$`Mean RMSE`)))+
-  scale_color_manual(values = c("black", closed_pal2(3), dist_pal2(8), pref_pal2(5),"gray70"))+
-  facet_wrap(~ disp_predictor) +
-  theme_bw()+
-  xlab("Cohen's D")+
-  ylab("Hellinger distance")+
-  ggtitle("Fishery dependent data compared to 2040-2069 data")+
-  xlim(min(future_res_df$cohens_d), max(future_res_df$cohens_d))+
-  ylim(min(future_res_df$hellinger_dist_discr), max(future_res_df$hellinger_dist_discr))+
-  NULL
-
-ggsave(future_bias_2040_2069_plot, filename = "future_bias_2040_2069_plot.png")
-
-#2070-2100
-future_bias_2070_2100_plot <- ggplot(future_res_df %>% filter(Comparison == "2070-2100"), 
-                                     aes(x = cohens_d, y = hellinger_dist_discr)) +
-  geom_vline(xintercept = 0, color = "gray70") + #for referenc
-  geom_point(aes(color = `Sampling regime`, size = `Mean RMSE`)) +
-  scale_size_continuous(limits = c(min(future_res_df$`Mean RMSE`), max(future_res_df$`Mean RMSE`)))+
-  scale_color_manual(values = c("black", closed_pal2(3), dist_pal2(8), pref_pal2(5),"gray70"))+
-  facet_wrap(~ disp_predictor) +
-  theme_bw()+
-  xlab("Cohen's D")+
-  ylab("Hellinger distance")+
-  ggtitle("Fishery dependent data compared to 2070-2100 data")+
-  xlim(min(future_res_df$cohens_d), max(future_res_df$cohens_d))+
-  ylim(min(future_res_df$hellinger_dist_discr), max(future_res_df$hellinger_dist_discr))+
-  NULL
-
-ggsave(future_bias_2070_2100_plot, filename = "future_bias_2070_2100_plot.png")
-
-#Can also try one big grid?
-future_bias_grid_plot <- ggplot(future_res_df, 
-                                aes(x = cohens_d, y = hellinger_dist_discr)) +
-  geom_vline(xintercept = 0, color = "gray70") + #for referenc
-  geom_point(aes(color = `Sampling regime`, size = `Mean RMSE`)) +
-  scale_color_manual(values = c("black", closed_pal2(3), dist_pal2(8), pref_pal2(5),"gray70"))+
-  facet_grid(Comparison ~ disp_predictor) +
-  theme_bw()+
-  xlab("Cohen's D")+
-  ylab("Hellinger distance")+
-  ggtitle("Fishery dependent data compared to future data")+
-  NULL
-
-ggsave(future_bias_grid_plot, filename = "future_bias_grid_plot.png")
 
 
 ##########################################
