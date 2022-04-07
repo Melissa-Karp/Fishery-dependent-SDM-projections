@@ -21,3 +21,5 @@ Karp et al. (2022). Projecting species distributions using fishery-dependent dat
 
 7. calculate_kl_ks_hd_and_cohens_d_All.R: code to calculate the climate bias and climate novelty (e.g., Hellinger Distance and Cohen's d) 
 
+8. DistancetoPort.R: This code calculates the distance from every cell in the ROMS extent to 5 different fishing ports along the US West Coast in CA, OR, and WA. 
+
