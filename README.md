@@ -4,7 +4,7 @@ Simulation looking at the impact of using fishery-dependent data in SDM and fore
 **Code authors**: Melissa Karp, Stephanie Brodie, James Smith, Owen Liu, Kate Richerson, Becca Selden
 
 **Relevant paper:**
-Karp et al. (2022). Projecting species distributions using fishery-dependent data. Fish and Fisheries.  
+Karp et al. Projecting species distributions using fishery-dependent data.   
 
 **File Descriptions:**
 1. SimulatedWorld_ROMS_FishDep_Final_updatedPres.R: function to simulate species presence and abundance in time and space with respect to environmental habitat preferences, and the different fishery-dependent sampling scenarios.
